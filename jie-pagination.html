@@ -177,7 +177,7 @@
 
         this.CONFIG_KEY_LIST.forEach(function (key) {
           if (config.hasOwnProperty(key)) {
-            self[key] = parseInt(config.key, 10) || 0;
+            self[key] = parseInt(config[key], 10) || 0;
           }
         });
 
