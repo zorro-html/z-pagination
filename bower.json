@@ -1,0 +1,9 @@
+{
+  "name": "jie-pagination",
+  "version": "0.0.1",
+  "main": "jie-pagination.html",
+  "dependencies": {
+    "polymer": "~0.5.0",
+    "jie-btn-group": "Jinjiang/jie-btn-group#~0.0.1"
+  }
+}

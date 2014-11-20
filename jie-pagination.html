@@ -1,0 +1,270 @@
+<!--
+  # pagination
+
+  翻页器
+
+  ## 特性
+
+  * `value`: 当前页码，默认为 1
+  * `min`: 最小页码，默认为 1
+  * `max`: 最大页码，默认为 1
+  * `range`: 从当前页码为中心展示的页码范围，负数表示展示所有页码，默认为 -1
+  * `siderange`: 从最小和最大页码为起点展示的页码范围，负数表示展示所有页码，默认为 0
+
+  ## 属性/方法
+
+  ### `value`
+
+  当前的页码，可读写
+
+  ### `gotoPage(num)`
+
+  设置当前的页码，这时如果页码有改动会触发 `changed` 事件
+
+  ### `setConfig(config)`
+
+  参数：`config` 可包含 `min`, `max`, `range`, `siderange`
+
+  ### `calcMax(unit, amount[, min])`
+
+  工具方法，根据每页的单位、总数量和最小页码计算出最大页码
+
+  # Example
+
+  ```
+  <jie-pagination max="9" value="3" range="3"></jie-pagination>
+
+  <script>
+    var pagination = document.querySelector('jie-pagination');
+
+    pagination.addEventListener('changed', function (event) {
+      // event.detail.value
+    });
+  </script>
+  ```
+-->
+
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../jie-btn-group/jie-btn-group.html">
+
+<polymer-element name="jie-pagination" attributes="value, min, max, range, siderange">
+
+  <template>
+    <style>
+      template + jie-btn {
+        margin-left: -1px;
+      }
+      jie-btn {
+        min-width: 1em;
+      }
+      jie-btn.active {
+        color: #333333;
+        background-color: #ebebeb;
+        border-color: #8b8b8b;
+      }
+      jie-btn.disabled {
+        cursor: not-allowed;
+        pointer-events: none;
+        box-shadow: none;
+        color: silver;
+      }
+    </style>
+    <jie-btn-group>
+      <jie-btn on-click="{{clickPrev}}" class="{{canPrev ? '' : 'disabled'}}">&laquo;</jie-btn>
+      <template repeat="{{page in pageList}}">
+        <jie-btn on-click="{{clickPage}}" class="{{page.status}}">{{page.num || '...'}}</jie-btn>
+      </template>
+      <jie-btn on-click="{{clickNext}}" class="{{canNext ? '' : 'disabled'}}">&raquo;</jie-btn>
+    </jie-btn-group>
+  </template>
+
+  <script>
+    Polymer('jie-pagination', {
+
+      /**
+       * 所有的可配置项命名
+       * @type {Array}
+       */
+      CONFIG_KEY_LIST: ['min', 'max', 'range', 'siderange'],
+
+      /**
+       * 当前页码，默认为 1
+       * @type {Number}
+       */
+      value: 1,
+
+      /**
+       * 最小页码，默认为 1
+       * @type {Number}
+       */
+      min: 1,
+
+      /**
+       * 最大页码，默认为 1
+       * @type {Number}
+       */
+      max: 1,
+
+      /**
+       * 从当前页码为中心展示的页码范围，负数表示展示所有页码，默认为 -1
+       * @type {Number}
+       */
+      range: -1,
+
+      /**
+       * 从最小和最大页码为起点展示的页码范围，负数表示展示所有页码，默认为 0
+       * @type {Number}
+       */
+      siderange: 0,
+
+      /**
+       * 是否是第一页
+       * @type {Boolean}
+       */
+      canPrev: false,
+
+      /**
+       * 是否是最后一页
+       * @type {Boolean}
+       */
+      canNext: false,
+
+      /**
+       * 页码列表，可包含的字段包括
+       * num: 页码
+       * status: 'disabled|active' 按钮状态
+       * @type {Array}
+       */
+      pageList: [{num: 1}],
+
+      /**
+       * 根据每页的单位、总数量和最小页码计算出最大页码
+       * @param  {Number} unit
+       * @param  {Number} amount
+       * @param  {Number} min
+       * @return {Number}
+       */
+      calcMax: function (unit, amount, min) {
+        var max;
+        min = parseInt(min || 1, 10) || 0;
+        max = min;
+        if (unit > 0 && amount > 0) {
+          max = min + Math.ceil(amount / unit) - 1;
+        }
+        return max;
+      },
+
+      /**
+       * domReady 后立刻更新页码列表
+       */
+      domReady: function () {
+        this.update();
+      },
+
+      /**
+       * value 更新后立刻更新页码列表
+       */
+      valueChanged: function () {
+        this.update();
+      },
+
+      /**
+       * 设置配置项，并立刻更新页码列表
+       * @param {Object} config
+       */
+      setConfig: function (config) {
+        var self = this;
+
+        this.CONFIG_KEY_LIST.forEach(function (key) {
+          if (config.hasOwnProperty(key)) {
+            self[key] = parseInt(config.key, 10) || 0;
+          }
+        });
+
+        if (this.max < this.min) {
+          this.max = this.min;
+        }
+
+        this.update();
+      },
+
+      /**
+       * 更新页码列表，具体规则详见各配置项的解释
+       */
+      update: function () {
+        var value = this.value;
+        var pageList = [];
+        var index = this.min;
+        var disabled = false;
+
+        if (this.max < this.min) {
+          this.max = this.min;
+        }
+        if (value < this.min) {
+          value = this.min;
+        }
+        if (value > this.max) {
+          value = this.max;
+        }
+
+        this.canPrev = value !== this.min;
+        this.canNext = value !== this.max;
+
+        while (index <= this.max) {
+          if (this.siderange < 0 ||
+            this.range < 0 ||
+            Math.abs(index - this.min) < this.siderange ||
+            Math.abs(index - this.max) < this.siderange ||
+            Math.abs(index - value) < this.range) {
+            pageList.push({num: index, status: (index === value) ? 'active' : ''});
+            disabled = false;
+          }
+          else {
+            if (!disabled) {
+              pageList.push({status: 'disabled'});
+              disabled = true;
+            }
+          }
+          index++;
+        }
+
+        this.pageList = pageList;
+      },
+
+      /**
+       * 翻页到第 `num` 页，并会自动更新页码列表
+       * @param {Number} num
+       */
+      gotoPage: function (num) {
+        var oldValue = this.value;
+        this.value = num;
+        if (oldValue !== num) {
+          this.fire('changed', {value: this.value});
+        }
+      },
+
+      /**
+       * 处理翻页动作
+       */
+      clickPage: function (e) {
+        var num = e.target.templateInstance.model.page.num;
+        this.gotoPage(num);
+      },
+
+      /**
+       * 处理上一页动作
+       */
+      clickPrev: function () {
+        this.gotoPage(this.value - 1);
+      },
+
+      /**
+       * 处理下一页动作
+       */
+      clickNext: function () {
+        this.gotoPage(this.value + 1);
+      }
+    });
+  </script>
+
+</polymer-element>
