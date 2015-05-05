@@ -5,23 +5,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, user-scalable=no">
 
-<title>Jie Pagination</title>
+<title>Zorro Pagination Element</title>
 
 <script src="../webcomponentsjs/webcomponents.js"></script>
-<link rel="import" href="jie-pagination.html">
+<link rel="import" href="../docs-maker/z-doc.html">
+
+<link rel="import" href="z-pagination.html">
 
 </head>
 <body>
 
-<jie-pagination max="9" value="3" range="3"></jie-pagination>
-
-<script>
-  var pagination = document.querySelector('jie-pagination');
-
-  pagination.addEventListener('changed', function (e) {
-    console.log(e.detail.value);
-  });
-</script>
+<z-doc name="z-pagination"></z-doc>
 
 </body>
 </html>
