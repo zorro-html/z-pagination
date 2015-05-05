@@ -1,9 +1,17 @@
 {
-  "name": "jie-pagination",
-  "version": "0.0.1",
-  "main": "jie-pagination.html",
+  "name": "z-pagination",
+  "version": "1.0.0",
+  "main": "z-pagination.html",
+  "ignore": [
+    "test"
+  ],
   "dependencies": {
     "polymer": "~0.5.0",
-    "jie-btn-group": "Jinjiang/jie-btn-group#~0.0.1"
+    "docs-parser": "Jinjiang/context-free-parser#master",
+    "z-btn-group": "zorro-html/z-btn-group"
+  },
+  "devDependencies": {
+    "docs-maker": "zorro-html/zorro-docs-maker",
+    "web-component-tester": "Polymer/web-component-tester#^1.4.2"
   }
 }

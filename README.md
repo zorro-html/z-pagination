@@ -1,43 +1,77 @@
-# pagination
+# `<z-pagination>`
 
-翻页器
+Pagination with style, config  and event
 
-## 特性
+## Attributes
 
-* `value`: 当前页码，默认为 1
-* `min`: 最小页码，默认为 1
-* `max`: 最大页码，默认为 1
-* `range`: 从当前页码为中心展示的页码范围，负数表示展示所有页码，默认为 -1
-* `siderange`: 从最小和最大页码为起点展示的页码范围，负数表示展示所有页码，默认为 0
+- `value`: current page number, `1` by default
+- `min`: min page number, `1` by default
+- `max`: max page number, `1` by default
+- `range`: how many numbers of pages shown around the current page, `-1` means show all, `-1` by default
+- `siderange`: how many numbers of pages shown from beginning and ending, `-1` means show all, `0` by default
 
-## 属性/方法
+## Properties
 
-### `value`
+- `value`: read / write current page number
 
-当前的页码，可读写
+## Methods
 
-### `gotoPage(num)`
+- `gotoPage(num)`: change current page and fire `changed` event if `value` changed
+- `setConfig(config)`: set `min`, `max`, `range`, `siderange` at once
+- `calcMax(unit, amount[, min])`: util method, get max page number by certain page unit and item amount
 
-设置当前的页码，这时如果页码有改动会触发 `changed` 事件
+## Examples
 
-### `setConfig(config)`
-
-参数：`config` 可包含 `min`, `max`, `range`, `siderange`
-
-### `calcMax(unit, amount[, min])`
-
-工具方法，根据每页的单位、总数量和最小页码计算出最大页码
-
-# Example
+### Show 3 pages beside the current page
 
 ```
-<jie-pagination max="9" value="3" range="3"></jie-pagination>
+<p>Now jump into page: <span id="pagination-number"></span></p>
+<z-pagination id="z-pagination" max="20" value="7" range="3"></z-pagination>
 
 <script>
-  var pagination = document.querySelector('jie-pagination');
+  (function (global) {
+    var pagination = document.querySelector('html /deep/ #z-pagination');
+    var number = document.querySelector('html /deep/ #z-pagination-number');
 
-  pagination.addEventListener('changed', function (event) {
-    // event.detail.value
-  });
+    pagination.addEventListener('changed', function (e) {
+      number.textContent = e.detail.value;
+    });
+  })(this);
+</script>
+```
+
+### Show 1 page at beginning and ending
+
+```
+<p>Now jump into page: <span id="z-pagination-number2"></span></p>
+<z-pagination id="z-pagination2" max="20" value="7" range="3" siderange="1"></z-pagination>
+
+<script>
+  (function (global) {
+    var pagination = document.querySelector('html /deep/ #z-pagination2');
+    var number = document.querySelector('html /deep/ #z-pagination-number2');
+
+    pagination.addEventListener('changed', function (e) {
+      number.textContent = e.detail.value;
+    });
+  })(this);
+</script>
+```
+
+### Show all pages
+
+```
+<p>Now jump into page: <span id="z-pagination-number3"></span></p>
+<z-pagination id="z-pagination3" max="10" value="3"></z-pagination>
+
+<script>
+  (function (global) {
+    var pagination = document.querySelector('html /deep/ #z-pagination3');
+    var number = document.querySelector('html /deep/ #z-pagination-number3');
+
+    pagination.addEventListener('changed', function (e) {
+      number.textContent = e.detail.value;
+    });
+  })(this);
 </script>
 ```
