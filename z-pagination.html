@@ -206,9 +206,11 @@ Pagination with style, config  and event
       /**
        * value 更新后立刻更新页码列表
        */
-      valueChanged: function () {
-        this.update();
-      },
+      valueChanged: function () {this.update();},
+      minChanged: function () {this.update();},
+      maxChanged: function () {this.update();},
+      rangeChanged: function () {this.update();},
+      siderangeChanged: function () {this.update();},
 
       /**
        * 设置配置项，并立刻更新页码列表
