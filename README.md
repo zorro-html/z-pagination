@@ -2,6 +2,12 @@
 
 Pagination with style, config  and event
 
+## Import
+
+```
+<link rel="import" href="z-pagination/z-pagination.html">
+```
+
 ## Attributes
 
 - `value`: current page number, `1` by default
